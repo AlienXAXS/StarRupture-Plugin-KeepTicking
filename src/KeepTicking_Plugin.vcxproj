@@ -258,19 +258,14 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="plugin.cpp" />
-    <ClCompile Include="mod_core.cpp" />
-    <ClCompile Include="hooks\fake_player\fake_player.cpp" />
+    <ClCompile Include="hooks\tick_logger\tick_logger.cpp" />
     <ClCompile Include="plugin_config.cpp" />
-    <ClCompile Include="sdk_helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="plugin.h" />
-    <ClInclude Include="mod_core.h" />
     <ClInclude Include="plugin_config.h" />
     <ClInclude Include="plugin_helpers.h" />
-    <ClInclude Include="hooks.h" />
-    <ClInclude Include="hooks\fake_player\fake_player.h" />
-    <ClInclude Include="sdk_helpers.h" />
+    <ClInclude Include="hooks\tick_logger\tick_logger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

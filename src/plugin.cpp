@@ -1,10 +1,8 @@
 #include "plugin.h"
 #include "plugin_helpers.h"
 #include "plugin_config.h"
-#include "mod_core.h"
-#include "Windows.h"
+#include "hooks/tick_logger/tick_logger.h"
 
-// Global plugin self pointer
 static IPluginSelf* g_self = nullptr;
 
 IPluginSelf* GetSelf() { return g_self; }
@@ -17,29 +15,9 @@ static PluginInfo s_pluginInfo = {
 	"KeepTicking",
 	MODLOADER_BUILD_TAG,
 	"AlienX",
-	"Prevents dedicated server from sleeping when no players are online",
+	"Suppresses server pause logic to keep the world ticking at all times",
 	PLUGIN_INTERFACE_VERSION
 };
-
-static bool IsServerBinary()
-{
-	wchar_t path[MAX_PATH] = {0};
-	if (GetModuleFileNameW(nullptr, path, MAX_PATH) == 0)
-	{
-		// If desired, log failure via GetLogger(); keep simple here.
-		return false;
-	}
-
-	// Extract filename part
-	wchar_t* filename = wcsrchr(path, L'\\');
-	if (!filename)
-		filename = wcsrchr(path, L'/');
-
-	const wchar_t* exeName = filename ? (filename + 1) : path;
-
-	// Case-insensitive compare
-	return _wcsicmp(exeName, L"StarRuptureServerEOS-Win64-Shipping.exe") == 0;
-}
 
 extern "C" {
 __declspec(dllexport) PluginInfo* GetPluginInfo()
@@ -51,33 +29,31 @@ __declspec(dllexport) bool PluginInit(IPluginSelf* self)
 {
 	g_self = self;
 
-	LOG_INFO("Plugin initializing...");
+	LOG_INFO("[KeepTicking] Plugin initializing...");
 
-	// Initialize config system with schema - creates default config if needed
 	KeepTickingConfig::Config::Initialize(self);
 
 	if (!KeepTickingConfig::Config::IsPluginEnabled())
 	{
-		LOG_INFO("Plugin is disabled in config - skipping initialization");
+		LOG_INFO("[KeepTicking] Disabled in config — skipping initialization");
 		return true;
 	}
 
-	if (!IsServerBinary())
-	{
-		LOG_WARN("This plugin is intended for dedicated server use only - skipping initialization");
-		return true;
-	}
+	auto* hooks = self->hooks;
+	if (hooks && hooks->Hooks)
+		Hooks::TickLogger::Install(self->scanner, hooks->Hooks);
 
-	ModCore::Initialize(g_self->scanner, g_self->hooks);
-
-	LOG_INFO("Plugin initialized");
 	return true;
 }
 
 __declspec(dllexport) void PluginShutdown()
 {
-	LOG_INFO("Plugin shutting down...");
-	ModCore::Shutdown();
+	LOG_INFO("[KeepTicking] Shutting down...");
+
+	auto* hooks = g_self ? g_self->hooks : nullptr;
+	if (hooks && hooks->Hooks)
+		Hooks::TickLogger::Uninstall(hooks->Hooks);
+
 	g_self = nullptr;
 }
 } // extern "C"
