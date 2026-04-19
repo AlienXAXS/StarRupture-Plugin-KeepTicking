@@ -1,7 +1,7 @@
 #include "plugin.h"
 #include "plugin_helpers.h"
 #include "plugin_config.h"
-#include "hooks/tick_logger/tick_logger.h"
+#include "hooks/pause_controller/pause_controller.h"
 
 static IPluginSelf* g_self = nullptr;
 
@@ -41,7 +41,7 @@ __declspec(dllexport) bool PluginInit(IPluginSelf* self)
 
 	auto* hooks = self->hooks;
 	if (hooks && hooks->Hooks)
-		Hooks::TickLogger::Install(self->scanner, hooks->Hooks);
+		Hooks::PauseController::Install(self->scanner, hooks->Hooks);
 
 	return true;
 }
@@ -52,7 +52,7 @@ __declspec(dllexport) void PluginShutdown()
 
 	auto* hooks = g_self ? g_self->hooks : nullptr;
 	if (hooks && hooks->Hooks)
-		Hooks::TickLogger::Uninstall(hooks->Hooks);
+		Hooks::PauseController::Uninstall(hooks->Hooks);
 
 	g_self = nullptr;
 }

@@ -3,7 +3,7 @@
 struct IPluginHookUtils;
 struct IPluginScanner;
 
-namespace Hooks::TickLogger
+namespace Hooks::PauseController
 {
 	void Install(IPluginScanner* scanner, IPluginHookUtils* hookUtils);
 	void Uninstall(IPluginHookUtils* hookUtils);

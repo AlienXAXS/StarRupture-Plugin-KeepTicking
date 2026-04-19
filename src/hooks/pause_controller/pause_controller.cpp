@@ -1,9 +1,10 @@
-#include "tick_logger.h"
+#include "pause_controller.h"
 #include "plugin_helpers.h"
 #include "plugin_interface.h"
+#include "sdk_helpers.h"
 #include <windows.h>
 
-namespace Hooks::TickLogger
+namespace Hooks::PauseController
 {
 	using FUpdatePause = void*(__fastcall*)(void*);
 
@@ -13,7 +14,22 @@ namespace Hooks::TickLogger
 
 	static void* __fastcall Detour_UpdatePause(void* thisPtr)
 	{
-		return nullptr;
+		int32_t playerCount = SDKHelpers::GetPlayerCount();
+
+		if (playerCount <= 0)
+		{
+			// No players online — skip pause logic and ensure time dilation is normal
+			SDK::UWorld* World = SDKHelpers::GetWorld();
+			if (World)
+			{
+				SDK::AWorldSettings* WorldSettings = World->K2_GetWorldSettings();
+				if (WorldSettings)
+					WorldSettings->TimeDilation = 1.0f;
+			}
+			return nullptr;
+		}
+
+		return Original_UpdatePause(thisPtr);
 	}
 
 	void Install(IPluginScanner* scanner, IPluginHookUtils* hookUtils)
