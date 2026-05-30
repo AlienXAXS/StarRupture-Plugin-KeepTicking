@@ -115,6 +115,7 @@ jobs:
           Write-Host "DEBUG chosen = $(Format-Semver $chosen)"
 
           $tag = Format-Semver $chosen
+          $nexusVersion = $tag.TrimStart('v')
           Write-Host "Final tag: $tag"
           echo "TAG=$tag" >> $env:GITHUB_OUTPUT
           echo "NEXUS_VERSION=$nexusVersion" >> $env:GITHUB_OUTPUT
