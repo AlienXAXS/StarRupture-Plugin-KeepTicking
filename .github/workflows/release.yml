@@ -117,6 +117,7 @@ jobs:
           $tag = Format-Semver $chosen
           Write-Host "Final tag: $tag"
           echo "TAG=$tag" >> $env:GITHUB_OUTPUT
+          echo "NEXUS_VERSION=$nexusVersion" >> $env:GITHUB_OUTPUT
 
       - name: Build Server Release
         run: |
