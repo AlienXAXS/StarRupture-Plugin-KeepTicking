@@ -16,7 +16,8 @@ static PluginInfo s_pluginInfo = {
 	MODLOADER_BUILD_TAG,
 	"AlienX",
 	"Suppresses server pause logic to keep the world ticking at all times",
-	PLUGIN_INTERFACE_VERSION
+	PLUGIN_INTERFACE_VERSION,
+	PLUGIN_TARGET_SERVER
 };
 
 extern "C" {
