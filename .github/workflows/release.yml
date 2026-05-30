@@ -87,7 +87,7 @@ jobs:
             /p:PostBuildEventUseInBuild=false `
             /p:GameSDKRoot="${{ github.workspace }}\game-sdk" `
             /p:PluginSDKInclude="${{ github.workspace }}\plugin-sdk\include" `
-            /p:StarRuptureSDKConfigDir="${{ github.workspace }}\game-sdk\Server\;${{ github.workspace }}\game-sdk\Server\SDK\" `
+            /p:StarRuptureSDKConfigDir="${{ github.workspace }}\game-sdk\Server\%3B${{ github.workspace }}\game-sdk\Server\SDK\" `
             /m /v:minimal
 
       - name: Build Server Release
