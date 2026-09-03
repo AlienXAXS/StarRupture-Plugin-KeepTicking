@@ -8,9 +8,16 @@ namespace Hooks::PauseController
 {
 	using FUpdatePause = void*(__fastcall*)(void*);
 
+	// Class::Function  UpdatePause (server pause driver)
+	static constexpr const char* kUpdatePausePattern =
+		"40 53 55 56 41 56 41 57 48 83 EC ?? 45 33 FF 48 8B E9";
+
 	static HookHandle   g_updatePauseHandle = nullptr;
 	static FUpdatePause Original_UpdatePause = nullptr;
 	static uintptr_t    g_imageBase = 0;
+
+	// Resolved during OnPluginLoadHooks; 0 means the pattern missed on this build.
+	static uintptr_t    g_updatePauseAddr = 0;
 
 	static void* __fastcall Detour_UpdatePause(void* thisPtr)
 	{
@@ -32,22 +39,30 @@ namespace Hooks::PauseController
 		return Original_UpdatePause(thisPtr);
 	}
 
-	void Install(IPluginScanner* scanner, IPluginHookUtils* hookUtils)
+	void Resolve(IPluginSelf* self, IPluginHookScanner* scanner)
 	{
-		if (!scanner || !hookUtils)
+		if (!self || !scanner)
+			return;
+
+		// Optional: a miss leaves the plugin loaded but inert, which is what the
+		// old scan-at-init path did. The loader still lists it for the user.
+		g_updatePauseAddr = scanner->ResolveOptional(self, "UpdatePause", kUpdatePausePattern);
+	}
+
+	void Install(IPluginHookUtils* hookUtils)
+	{
+		if (!hookUtils)
 		{
-			LOG_ERROR("[KeepTicking] scanner or hookUtils is null");
+			LOG_ERROR("[KeepTicking] hookUtils is null");
 			return;
 		}
 
 		g_imageBase = reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr));
 
-		const uintptr_t addr = scanner->FindPatternInMainModule(
-			"40 53 55 56 41 56 41 57 48 83 EC ?? 45 33 FF 48 8B E9");
-
+		const uintptr_t addr = g_updatePauseAddr;
 		if (!addr)
 		{
-			LOG_ERROR("[KeepTicking] UpdatePause pattern not found — server pause will NOT be suppressed");
+			LOG_ERROR("[KeepTicking] UpdatePause unresolved — server pause will NOT be suppressed");
 			return;
 		}
 

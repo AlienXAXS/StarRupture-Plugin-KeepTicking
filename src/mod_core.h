@@ -2,14 +2,14 @@
 
 #include "plugin_interface.h"
 
-// Core mod logic — this is where you define your patterns, hooks, and patches.
-// Called once from DllMain after the proxy is initialized.
+// Core mod logic — installs hooks against addresses already resolved in the
+// plugin's OnPluginLoadHooks export.
 
 namespace ModCore
 {
-	// Run on a background thread after DLL load.
-	// Scans for patterns and installs hooks/patches.
-	void Initialize(IPluginScanner * scanner, IPluginHooks * hooks);
+	// Installs hooks/patches. Patterns are resolved earlier, during
+	// OnPluginLoadHooks; nothing here may scan.
+	void Initialize(IPluginHooks * hooks);
 
 	// Cleanup — remove hooks, restore patches.
 	void Shutdown();

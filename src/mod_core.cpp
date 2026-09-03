@@ -2,12 +2,12 @@
 #include "plugin_helpers.h"
 #include "hooks/pause_controller/pause_controller.h"
 
-void ModCore::Initialize(IPluginScanner* scanner, IPluginHooks* hooks)
+void ModCore::Initialize(IPluginHooks* hooks)
 {
 	LOG_INFO("[KeepTicking] Initializing...");
 
 	if (hooks && hooks->Hooks)
-		Hooks::PauseController::Install(scanner, hooks->Hooks);
+		Hooks::PauseController::Install(hooks->Hooks);
 
 	LOG_INFO("[KeepTicking] Initialized");
 }
