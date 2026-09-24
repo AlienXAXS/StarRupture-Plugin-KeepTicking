@@ -46,10 +46,7 @@ namespace SDKHelpers
 
 		// Get client connections array
 		// NetDriver->ClientConnections is TArray<UNetConnection*>
-		int32_t playerCount = NetDriver->ClientConnections.Num();
-
-		LOG_DEBUG("[SDK] Found %d connected clients via NetDriver", playerCount);
-		return playerCount;
+		return NetDriver->ClientConnections.Num();
 	}
 
 	int32_t GetLocalPlayerCount(SDK::UWorld* World)
