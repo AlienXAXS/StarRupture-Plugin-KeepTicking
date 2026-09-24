@@ -25,7 +25,7 @@ namespace Hooks::PauseController
 
 		if (playerCount <= 0)
 		{
-			// No players online — skip pause logic and ensure time dilation is normal
+			// No players online - skip pause logic and ensure time dilation is normal
 			SDK::UWorld* World = SDKHelpers::GetWorld();
 			if (World)
 			{
@@ -46,7 +46,20 @@ namespace Hooks::PauseController
 
 		// Optional: a miss leaves the plugin loaded but inert, which is what the
 		// old scan-at-init path did. The loader still lists it for the user.
-		g_updatePauseAddr = scanner->ResolveOptional(self, "UpdatePause", kUpdatePausePattern);
+		//
+		// FUNCTION_START: a detour is written over this address, so it has to be
+		// a function's primary entry with room for the 14-byte jump. The
+		// prologue here (40 53 55 56 41 56 41 57 ...) is an ordinary one that
+		// plenty of other functions share, which is precisely when a match
+		// needs checking against the exception directory rather than trusting
+		// the bytes.
+		PluginScanRequest req = PLUGIN_SCAN_REQUEST_INIT;
+		req.hookName = "UpdatePause";
+		req.pattern  = kUpdatePausePattern;
+		req.kind     = PLUGIN_SCAN_FUNCTION_START;
+		req.flags    = PLUGIN_SCAN_FLAG_OPTIONAL;
+
+		g_updatePauseAddr = scanner->Resolve(self, &req);
 	}
 
 	void Install(IPluginHookUtils* hookUtils)
@@ -62,7 +75,7 @@ namespace Hooks::PauseController
 		const uintptr_t addr = g_updatePauseAddr;
 		if (!addr)
 		{
-			LOG_ERROR("[KeepTicking] UpdatePause unresolved — server pause will NOT be suppressed");
+			LOG_ERROR("[KeepTicking] UpdatePause unresolved - server pause will NOT be suppressed");
 			return;
 		}
 
