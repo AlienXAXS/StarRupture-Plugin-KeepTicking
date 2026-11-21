@@ -43,7 +43,7 @@ Only the Server configurations build. The plain `Debug` and `Release` configurat
 
 Original mod by [@AlienXAXS](https://github.com/AlienXAXS).
 
-Maintained by [@msantoro12](https://github.com/msantoro12), creator of [StarRupture Planner](https://starrupture.goodstuff.software).
+Maintained by [@msantoro12](https://github.com/msantoro12).
 
 ---
 
