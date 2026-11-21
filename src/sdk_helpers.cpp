@@ -1,5 +1,6 @@
 #include "sdk_helpers.h"
 #include "plugin_helpers.h"
+#include "keepticking_fields.h"
 
 namespace SDKHelpers
 {
@@ -23,8 +24,8 @@ namespace SDKHelpers
 		if (!World)
 			return nullptr;
 
-		// Access NetDriver directly from UWorld
-		return World->NetDriver;
+		SDK::UNetDriver** netDriver = KeepTickingFields::WorldNetDriver.In(World);
+		return netDriver ? *netDriver : nullptr;
 	}
 
 	int32_t GetPlayerCount()
@@ -45,8 +46,9 @@ namespace SDKHelpers
 		}
 
 		// Get client connections array
-		// NetDriver->ClientConnections is TArray<UNetConnection*>
-		return NetDriver->ClientConnections.Num();
+		// ClientConnections is TArray<UNetConnection*>
+		const auto* connections = KeepTickingFields::NetDriverClientConnections.In(NetDriver);
+		return connections ? connections->Num() : -1;
 	}
 
 	int32_t GetLocalPlayerCount(SDK::UWorld* World)

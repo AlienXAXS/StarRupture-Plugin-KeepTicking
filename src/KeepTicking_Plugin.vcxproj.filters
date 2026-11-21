@@ -26,6 +26,9 @@
     <ClInclude Include="plugin_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="keepticking_fields.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="plugin_helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>

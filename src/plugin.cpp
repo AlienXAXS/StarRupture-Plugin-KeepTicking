@@ -1,6 +1,7 @@
 #include "plugin.h"
 #include "plugin_helpers.h"
 #include "plugin_config.h"
+#include "keepticking_fields.h"
 #include "hooks/pause_controller/pause_controller.h"
 
 static IPluginSelf* g_self = nullptr;
@@ -17,7 +18,9 @@ static PluginInfo s_pluginInfo = {
 	"AlienX",
 	"Suppresses server pause logic to keep the world ticking at all times",
 	PLUGIN_INTERFACE_VERSION,
-	PLUGIN_TARGET_SERVER
+	PLUGIN_TARGET_SERVER,
+	PLUGIN_GAME_BUILT_CL,
+	PLUGIN_MAP_MIGRATED
 };
 
 extern "C" {
@@ -32,11 +35,19 @@ __declspec(dllexport) PluginInfo* GetPluginInfo()
 __declspec(dllexport) void OnPluginLoadHooks(IPluginSelf* self, IPluginHookScanner* scanner)
 {
 	g_self = self;
+
+	// Every game member the plugin reads, from the loader's map for the running
+	// build. A miss is recorded with the loader, which refuses the plugin.
+	KeepTickingFields::Resolve(self, scanner);
 	Hooks::PauseController::Resolve(self, scanner);
 }
 
 __declspec(dllexport) bool PluginInit(IPluginSelf* self)
 {
+	// First, before any early return: off its game build the loader refuses a
+	// migrated plugin whose PluginInit did not ask for the Game-SDK globals.
+	PluginSdkRuntime::Init(self->hooks);
+
 	g_self = self;
 
 	LOG_INFO("[KeepTicking] Plugin initializing...");

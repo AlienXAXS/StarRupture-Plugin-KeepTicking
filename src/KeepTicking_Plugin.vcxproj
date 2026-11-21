@@ -265,6 +265,7 @@
   <ItemGroup>
     <ClInclude Include="plugin.h" />
     <ClInclude Include="plugin_config.h" />
+    <ClInclude Include="keepticking_fields.h" />
     <ClInclude Include="plugin_helpers.h" />
     <ClInclude Include="sdk_helpers.h" />
     <ClInclude Include="hooks\pause_controller\pause_controller.h" />

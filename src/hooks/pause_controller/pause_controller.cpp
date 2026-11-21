@@ -2,13 +2,15 @@
 #include "plugin_helpers.h"
 #include "plugin_interface.h"
 #include "sdk_helpers.h"
+#include "keepticking_fields.h"
 #include <windows.h>
 
 namespace Hooks::PauseController
 {
 	using FUpdatePause = void*(__fastcall*)(void*);
 
-	// Class::Function  UpdatePause (server pause driver)
+	// The fallback for a loader or build whose map has no row for
+	// KeepTickingFields::UpdatePause.
 	static constexpr const char* kUpdatePausePattern =
 		"40 53 55 56 41 56 41 57 48 83 EC ?? 45 33 FF 48 8B E9";
 
@@ -30,8 +32,8 @@ namespace Hooks::PauseController
 			if (World)
 			{
 				SDK::AWorldSettings* WorldSettings = World->K2_GetWorldSettings();
-				if (WorldSettings)
-					WorldSettings->TimeDilation = 1.0f;
+				if (float* timeDilation = KeepTickingFields::WorldSettingsTimeDilation.In(WorldSettings))
+					*timeDilation = 1.0f;
 			}
 			return nullptr;
 		}
@@ -53,13 +55,11 @@ namespace Hooks::PauseController
 		// plenty of other functions share, which is precisely when a match
 		// needs checking against the exception directory rather than trusting
 		// the bytes.
-		PluginScanRequest req = PLUGIN_SCAN_REQUEST_INIT;
-		req.hookName = "UpdatePause";
-		req.pattern  = kUpdatePausePattern;
-		req.kind     = PLUGIN_SCAN_FUNCTION_START;
-		req.flags    = PLUGIN_SCAN_FLAG_OPTIONAL;
-
-		g_updatePauseAddr = scanner->Resolve(self, &req);
+		//
+		// The loader's map answers first; the pattern is this plugin's own
+		// fallback.
+		g_updatePauseAddr = PluginMap::Function(scanner, self, KeepTickingFields::UpdatePause,
+			kUpdatePausePattern, PLUGIN_SCAN_FUNCTION_START, PLUGIN_SCAN_FLAG_OPTIONAL);
 	}
 
 	void Install(IPluginHookUtils* hookUtils)
