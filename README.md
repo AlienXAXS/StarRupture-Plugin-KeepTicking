@@ -15,7 +15,7 @@ Prevents a [StarRupture](https://store.steampowered.com/app/1631270/StarRupture/
 
 3. After the first launch, edit `Plugins\config\KeepTicking.ini` and set `Enabled=1`.
 
-> **Requires [StarRupture-ModLoader](https://github.com/AlienXAXS/StarRupture-ModLoader)** to be installed first.
+> **Requires [StarRupture-ModLoader](https://github.com/AlienXAXS/StarRupture-ModLoader) {LOADER_VERSION} or newer** to be installed first.
 
 ---
 
@@ -25,6 +25,7 @@ Prevents a [StarRupture](https://store.steampowered.com/app/1631270/StarRupture/
 |---|---|
 | Server still sleeping | Confirm `Enabled=1` is set in `Plugins\config\KeepTicking.ini`. |
 | Plugin not loading | Check `modloader.log` in `Binaries\Win64\` for errors. |
+| Plugin refused after a game update | KeepTicking takes its game addresses and member offsets from the mod loader's version object map (the version map). If the loader has no entry for your server build, the plugin is refused and the log says why. Update the mod loader. |
 
 ---
 
@@ -33,6 +34,16 @@ Prevents a [StarRupture](https://store.steampowered.com/app/1631270/StarRupture/
 Requires Visual Studio 2022 and the [StarRupture-Plugin-SDK](https://github.com/AlienXAXS/StarRupture-Plugin-SDK).
 
 Clone the repo, open `KeepTicking_Plugin.sln`, and build the `Server Release|x64` configuration. The output DLL will be placed in `build\Server Release\Plugins\`.
+
+Only the Server configurations build. The plain `Debug` and `Release` configurations stop with an error that names the Server ones.
+
+---
+
+## Credits
+
+Original mod by [@AlienXAXS](https://github.com/AlienXAXS).
+
+Maintained by [@msantoro12](https://github.com/msantoro12), creator of [StarRupture Planner](https://starrupture.goodstuff.software).
 
 ---
 
