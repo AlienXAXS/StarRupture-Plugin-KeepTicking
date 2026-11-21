@@ -15,7 +15,7 @@ Prevents a [StarRupture](https://store.steampowered.com/app/1631270/StarRupture/
 
 3. After the first launch, edit `Plugins\config\KeepTicking.ini` and set `Enabled=1`.
 
-> **Requires [StarRupture-ModLoader](https://github.com/AlienXAXS/StarRupture-ModLoader) {LOADER_VERSION} or newer** to be installed first.
+> **Requires [StarRupture-ModLoader](https://github.com/AlienXAXS/StarRupture-ModLoader) v1.25.0 or newer** to be installed first.
 
 ---
 
@@ -26,6 +26,8 @@ Prevents a [StarRupture](https://store.steampowered.com/app/1631270/StarRupture/
 | Server still sleeping | Confirm `Enabled=1` is set in `Plugins\config\KeepTicking.ini`. |
 | Plugin not loading | Check `modloader.log` in `Binaries\Win64\` for errors. |
 | Plugin refused after a game update | KeepTicking takes its game addresses and member offsets from the mod loader's version object map (the version map). If the loader has no entry for your server build, the plugin is refused and the log says why. Update the mod loader. |
+
+On a dedicated server, keep the mod loader up to date. It carries the version map rows for each server build.
 
 ---
 
