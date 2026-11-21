@@ -25,7 +25,7 @@ Prevents a [StarRupture](https://store.steampowered.com/app/1631270/StarRupture/
 |---|---|
 | Server still sleeping | Confirm `Enabled=1` is set in `Plugins\config\KeepTicking.ini`. |
 | Plugin not loading | Check `modloader.log` in `Binaries\Win64\` for errors. |
-| Plugin refused after a game update | KeepTicking takes its game addresses and member offsets from the mod loader's version object map (the version map). If the loader has no entry for your server build, the plugin is refused and the log says why. Update the mod loader. |
+| Plugin refused after a game update | KeepTicking takes its game addresses and member offsets from the mod loader's version object map (the version map). The three game members it reads come from the game's own data on any server build. The address of the pause function comes from the version map, and KeepTicking falls back on its own byte pattern, which matches CL 127004, the current 0.3.5 server. If neither finds it, as can happen on a newer server build the version map has no entry for, the plugin is refused. `modloader.log` then has `[HookScan] 'KeepTicking' will NOT be loaded -- PluginInit will not be called.`, with the reason listed above it. Update the mod loader. |
 
 On a dedicated server, keep the mod loader up to date. It carries the version map rows for each server build.
 
