@@ -6,9 +6,9 @@ namespace SDKHelpers
 {
 	SDK::UWorld* GetWorld()
 	{
-		// Use the SDK's built-in UWorld::GetWorld() function
-		// This is implemented in SDK/Engine_functions.cpp
-		SDK::UWorld* World = SDK::UWorld::GetWorld();
+		// The plugin SDK's world getter: it takes GWorld from the loader's
+		// globals when the loader has them, and the Game-SDK's otherwise.
+		SDK::UWorld* World = PluginSdkRuntime::GetWorld();
 
 		if (!World)
 		{

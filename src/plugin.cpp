@@ -36,7 +36,7 @@ __declspec(dllexport) void OnPluginLoadHooks(IPluginSelf* self, IPluginHookScann
 {
 	g_self = self;
 
-	// Every game member the plugin reads, from the loader's map for the running
+	// The game members the plugin reads, from the loader's map for the running
 	// build. A miss is recorded with the loader, which refuses the plugin.
 	KeepTickingFields::Resolve(self, scanner);
 	Hooks::PauseController::Resolve(self, scanner);
